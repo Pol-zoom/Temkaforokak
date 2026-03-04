@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>С 8 марта, девушки из чата Jay_TB!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0718;
+  --neon:#ff69b4;
+  --neon-2:#aa00ff;
+  --neon-cyan:#00ffff;
+  --glow:rgba(255,105,180,0.7);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  min-height:100vh;
+  background:var(--bg);
+  font-family:'Fira Code', 'Courier New', monospace;
+  color:var(--neon-cyan);
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:crosshair;
+}
+canvas{
+  position:fixed; 
+  top:0; left:0; 
+  width:100%; height:100%; 
+  z-index:0;
+  pointer-events:none;
+}
+#matrixCanvas{z-index:1;}
+#particleCanvas{z-index:2;}
+.stars{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  background:transparent;
+  pointer-events:none;
+}
+.star{
+  position:absolute;
+  background:white;
+  border-radius:50%;
+  box-shadow:0 0 10px white;
+  opacity:0;
+  animation:twinkle var(--duration) infinite ease-in-out;
+}
+@keyframes twinkle{
+  0%,100%{opacity:0;}
+  50%{opacity:1;}
+}
+
+.screen{
+  position:relative;
+  z-index:10;
+  width:84%;
+  max-width:860px;
+  min-width:320px;
+  padding:32px;
+  background:rgba(8,5,20,0.7);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-radius:24px;
+  border:2px solid rgba(0,255,255,0.4);
+  box-shadow:
+    0 0 30px var(--neon-cyan),
+    0 0 60px var(--neon-2),
+    inset 0 0 30px rgba(255,105,180,0.3);
+  text-align:left;
+  transition:all 0.4s ease;
+}
+.screen::before{
+  content:'';
+  position:absolute;
+  top:-2px; left:-2px; right:-2px; bottom:-2px;
+  background:linear-gradient(45deg, var(--neon), var(--neon-2), var(--neon-cyan), var(--neon));
+  border-radius:26px;
+  z-index:-1;
+  opacity:0.4;
+  filter:blur(8px);
+  animation:borderGlow 6s linear infinite;
+}
+@keyframes borderGlow{
+  0%{opacity:0.4;}
+  50%{opacity:0.8;}
+  100%{opacity:0.4;}
+}
+.screen:hover{
+  border-color:var(--neon);
+  box-shadow:
+    0 0 40px var(--neon-cyan),
+    0 0 80px var(--neon-2),
+    0 0 120px var(--neon);
+}
+.cyber-header{
+  text-align:center;
+  margin-bottom:20px;
+  font-size:14px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--neon);
+  text-shadow:0 0 10px var(--neon);
+  animation:flicker 3s infinite;
+}
+@keyframes flicker{
+  0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;}
+  20%,24%,55%{opacity:0.3;}
+}
+
+#hackText{
+  min-height:60px;
+  font-size:18px;
+  color:var(--neon-cyan);
+  position:relative;
+  padding:8px;
+  border-left:4px solid var(--neon);
+  background:rgba(0,255,255,0.05);
+  border-radius:0 8px 8px 0;
+  margin-bottom:12px;
+  text-shadow:0 0 5px currentColor;
+}
+
+.card{
+  margin-top:12px;
+  padding:8px 4px;
+  display:none;
+  max-height: 70vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.card::-webkit-scrollbar {
+  display: none;
+}
+.card p{
+  margin:16px 0;
+  padding:12px 16px;
+  background:rgba(20,10,30,0.6);
+  border-left:4px solid transparent;
+  border-radius:12px;
+  font-size:16px;
+  line-height:1.5;
+  transition:all 0.3s cubic-bezier(0.2,0.9,0.3,1);
+  box-shadow:0 0 15px rgba(255,105,180,0.2);
+  backdrop-filter:blur(2px);
+}
+.card p:hover{
+  border-left-color:var(--neon-2);
+  background:rgba(40,20,60,0.8);
+  transform:translateX(8px) scale(1.02);
+  box-shadow:0 0 30px var(--neon);
+}
+.card p span{
+  display:inline-block;
+  margin-right:8px;
+  font-size:14px;
+}
+
+#startMessage{
+  position:absolute;
+  z-index:20;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  color:var(--neon-cyan);
+  font-size:22px;
+  padding:18px 30px;
+  border-radius:40px;
+  background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(8px);
+  border:2px solid var(--neon-cyan);
+  text-shadow:0 0 20px var(--neon-cyan);
+  box-shadow:0 0 40px var(--neon-cyan);
+  white-space:nowrap;
+  animation:breathing 2s infinite;
+}
+@keyframes breathing{
+  0%,100%{box-shadow:0 0 40px var(--neon-cyan);}
+  50%{box-shadow:0 0 70px var(--neon-2);}
+}
+
+#musicPrompt{
+  position:absolute;
+  z-index:30;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  background:rgba(8,5,20,0.95);
+  backdrop-filter:blur(16px);
+  color:var(--neon-cyan);
+  padding:32px 48px;
+  border-radius:32px;
+  text-align:center;
+  display:none;
+  border:2px solid var(--neon-2);
+  box-shadow:0 0 60px var(--neon-2), inset 0 0 20px rgba(255,105,180,0.3);
+  animation:pop 0.3s ease;
+}
+@keyframes pop{
+  from{transform:translate(-50%,-40%); opacity:0;}
+  to{transform:translate(-50%,-50%); opacity:1;}
+}
+#musicPrompt div:first-child{
+  font-size:26px;
+  margin-bottom:12px;
+  font-weight:600;
+}
+#musicPrompt small{
+  display:block;
+  margin-bottom:20px;
+  opacity:0.7;
+  letter-spacing:2px;
+}
+#musicPrompt button{
+  margin:0 12px;
+  padding:14px 36px;
+  font-size:18px;
+  cursor:pointer;
+  border:none;
+  border-radius:40px;
+  background:transparent;
+  color:var(--neon-cyan);
+  border:2px solid var(--neon-cyan);
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:3px;
+  transition:0.3s;
+  position:relative;
+  overflow:hidden;
+}
+#musicPrompt button::before{
+  content:'';
+  position:absolute;
+  top:50%; left:50%;
+  width:0; height:0;
+  border-radius:50%;
+  background:var(--neon-cyan);
+  transform:translate(-50%,-50%);
+  transition:width 0.4s, height 0.4s;
+  z-index:-1;
+}
+#musicPrompt button:hover{
+  color:#000;
+  border-color:var(--neon-cyan);
+}
+#musicPrompt button:hover::before{
+  width:200px;
+  height:200px;
+}
+#musicPrompt button:last-child{
+  border-color:var(--neon-2);
+  color:var(--neon-2);
+}
+#musicPrompt button:last-child::before{
+  background:var(--neon-2);
+}
+#musicPrompt button:last-child:hover{
+  color:#000;
+}
+@media (max-width:600px){
+  .screen{padding:20px; width:92%;}
+  #hackText{font-size:16px;}
+  .card p{font-size:14px;}
+  #startMessage{font-size:18px; padding:14px 24px; white-space:normal;}
+  #musicPrompt{padding:24px; width:90%;}
+  #musicPrompt button{padding:10px 20px; font-size:16px; margin:8px;}
+  .card{max-height: 60vh;}
+}
+</style>
+</head>
+<body>
+<canvas id="matrixCanvas"></canvas>
+<canvas id="particleCanvas"></canvas>
+
+<!-- Звёздное небо (генерируется через JS) -->
+<div class="stars" id="stars"></div>
+
+<div class="screen" id="screen">
+  <div class="cyber-header">✦ SYSTEM: MARCH 8 ✦</div>
+  <div id="hackText" data-text=""></div>
+  <div class="card" id="card"></div>
+</div>
+
+<div id="startMessage">✦Тапни разок по экрану и запустится темка ✦</div>
+
+<div id="musicPrompt">
+  <div>Включить звуковое сопроваждение?</div>
+  <button id="musicYes">Да</button>
+  <button id="musicNo">Нет</button>
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="magic.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+function createStars() {
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 3 + 1;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
+    star.style.animationDelay = Math.random() * 5 + 's';
+    starsContainer.appendChild(star);
+  }
+}
+createStars();
+
+// Canvas
+const matrixCanvas = document.getElementById('matrixCanvas');
+const matrixCtx = matrixCanvas.getContext('2d');
+const particleCanvas = document.getElementById('particleCanvas');
+const pctx = particleCanvas.getContext('2d');
+const hackTextElem = document.getElementById('hackText');
+const card = document.getElementById('card');
+const startMessage = document.getElementById('startMessage');
+const musicPrompt = document.getElementById('musicPrompt');
+const musicYes = document.getElementById('musicYes');
+const musicNo = document.getElementById('musicNo');
+const bgMusic = document.getElementById('bgMusic');
+
+let started = false;
+let promptActive = false;
+
+// Размеры canvas
+let W, H, fontSize, columns;
+let drops = [];
+const chars = '01アイウエオカキクケコサシスセソタチツテト';
+
+function resizeCanvas() {
+  W = matrixCanvas.width = particleCanvas.width = window.innerWidth;
+  H = matrixCanvas.height = particleCanvas.height = window.innerHeight;
+  fontSize = Math.max(14, Math.floor(Math.min(W, H) / 48));
+  columns = Math.floor(W / fontSize);
+  drops = new Array(columns).fill(0).map(() => Math.random() * H / fontSize);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+function drawMatrix() {
+  matrixCtx.fillStyle = 'rgba(2, 0, 12, 0.1)';
+  matrixCtx.fillRect(0, 0, W, H);
+  matrixCtx.font = fontSize + 'px "Fira Code", monospace';
+
+  for (let i = 0; i < columns; i++) {
+    const y = drops[i] * fontSize;
+    
+    if (y < H / 3) matrixCtx.fillStyle = '#ff69b4';
+    else if (y < 2 * H / 3) matrixCtx.fillStyle = '#ff00ff';
+    else matrixCtx.fillStyle = '#00ffff';
+    
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    matrixCtx.fillText(char, i * fontSize, y);
+
+    if (y > H && Math.random() > 0.98) drops[i] = 0;
+    else drops[i] += Math.random() * 1.5 + 0.5;
+  }
+}
+
+// Частицы
+let particles = [];
+
+function spawnExplosion(x, y, count = 30) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 3 + 1;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: Date.now() + 500 + Math.random() * 500,
+      size: Math.random() * 8 + 4,
+      color: Math.random() > 0.5 ? '#ff69b4' : '#00ffff',
+      char: chars[Math.floor(Math.random() * chars.length)]
+    });
+  }
+}
+
+function updateParticles() {
+  pctx.clearRect(0, 0, W, H);
+  const now = Date.now();
+  
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    if (now > p.life) {
+      particles.splice(i, 1);
+      continue;
+    }
+    p.x += p.vx;
+    p.y += p.vy;
+    const alpha = 1 - (p.life - now) / 500;
+    pctx.globalAlpha = alpha;
+    pctx.fillStyle = p.color;
+    pctx.font = p.size + 'px "Fira Code", monospace';
+    pctx.fillText(p.char, p.x, p.y);
+  }
+  pctx.globalAlpha = 1;
+}
+const authors = ['root', 'admin', 'guest', 'user', 'sysop', 'hacker', 'neo', 'trinity'];
+
+const hackSteps = [
+  "> Сканируем чат Jay_TB...",
+  "> Обнаружены активные пользователи...",
+  "> Идентифицируем девушек...",
+  "> Подгружаем базу пожеланий...",
+  "> Запускаем праздничный протокол...",
+  "> Ну что погнали епт"
+];
+
+const wishes = [
+  "С 8 марта, дорогие девушки с чата Jay_TB!",
+  "Пусть каждый день будет ярким и незабываемым!",
+  "Желаем счастья, улыбок и вдохновения!",
+  "Пусть мечты сбываются легко и быстро!",
+  "Знайте вы лучшие!",
+  "Пусть здоровье и энергия всегда будут с вами!",
+  "Пусть каждый момент приносит радость!",
+  "Любви, тепла и поддержки близких!",
+  "Пусть все планы успешно реализуются!",
+  "Улыбайтесь чаще и наслаждайтесь жизнью!",
+  "Оставайтесь такими же прекрасными!",
+  "Пусть в душе всегда цветёт сакура"
+];
+
+function typeText(el, text, speed = 100) {
+  return new Promise(resolve => {
+    el.textContent = '';
+    if (el.dataset) el.dataset.text = text;
+    let i = 0;
+    const iv = setInterval(() => {
+      if (i >= text.length) {
+        clearInterval(iv);
+        resolve();
+        return;
+      }
+      el.textContent += text[i];
+      i++;
+    }, speed);
+  });
+}
+
+function getCenter(el) {
+  const r = el.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
+function scrollCardToBottom() {
+  card.scrollTo({
+    top: card.scrollHeight,
+    behavior: 'smooth'
+  });
+}
+
+async function runHack() {
+  for (let step of hackSteps) {
+    await typeText(hackTextElem, step, 100);
+    await new Promise(r => setTimeout(r, 1500));
+  }
+
+  hackTextElem.style.display = 'none';
+  card.style.display = 'block';
+
+  for (let i = 0; i < wishes.length; i++) {
+    const p = document.createElement('p');
+    const author = authors[Math.floor(Math.random() * authors.length)];
+    const authorSpan = document.createElement('span');
+    authorSpan.style.color = '#ff69b4';
+    authorSpan.style.opacity = '0.7';
+    authorSpan.textContent = '<' + author + '> ';
+    p.appendChild(authorSpan);
+    card.appendChild(p);
+
+    await typeText(p, wishes[i], 100);
+    scrollCardToBottom();
+
+    const pos = getCenter(p);
+    spawnExplosion(pos.x, pos.y, 20);
+
+    await new Promise(r => setTimeout(r, 2000));
+  }
+}
+
+function fadeInAudio() {
+  bgMusic.volume = 0.2;
+  bgMusic.play().catch(() => {});
+}
+
+function startAll() {
+  if (started) return;
+  started = true;
+
+  startMessage.style.display = 'none';
+  musicPrompt.style.display = 'none';
+
+  setInterval(drawMatrix, 40);
+  setInterval(updateParticles, 30);
+
+  runHack();
+
+  particleCanvas.addEventListener('click', (e) => {
+    spawnExplosion(e.clientX, e.clientY, 25);
+  });
+}
+
+function showPrompt() {
+  if (promptActive || started) return;
+  promptActive = true;
+  musicPrompt.style.display = 'block';
+}
+
+musicYes.onclick = () => {
+  fadeInAudio();
+  startAll();
+};
+
+musicNo.onclick = startAll;
+
+document.addEventListener('click', function(e) {
+  if (!started && !promptActive) showPrompt();
+});
+
+document.addEventListener('keydown', function(e) {
+  if ((e.key === 'Enter' || e.key === ' ') && !started && !promptActive) {
+    e.preventDefault();
+    showPrompt();
+  }
+});
+
+document.body.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+}, { passive: false });
+</script>
+</body>
+</html>
