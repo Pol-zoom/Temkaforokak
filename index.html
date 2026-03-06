@@ -276,7 +276,6 @@ canvas{
 <canvas id="matrixCanvas"></canvas>
 <canvas id="particleCanvas"></canvas>
 
-<!-- Звёздное небо (генерируется через JS) -->
 <div class="stars" id="stars"></div>
 
 <div class="screen" id="screen">
@@ -285,10 +284,10 @@ canvas{
   <div class="card" id="card"></div>
 </div>
 
-<div id="startMessage">✦Тапни разок по экрану и запустится темка ✦</div>
+<div id="startMessage">✦ Тапни разок по экрану и запустится темка ✦</div>
 
 <div id="musicPrompt">
-  <div>Включить звуковое сопроваждение?</div>
+  <div>Включить звуковое сопровождение?</div>
   <button id="musicYes">Да</button>
   <button id="musicNo">Нет</button>
 </div>
@@ -298,7 +297,6 @@ canvas{
 </audio>
 
 <script>
-
 function createStars() {
   const starsContainer = document.getElementById('stars');
   for (let i = 0; i < 100; i++) {
@@ -316,7 +314,6 @@ function createStars() {
 }
 createStars();
 
-// Canvas
 const matrixCanvas = document.getElementById('matrixCanvas');
 const matrixCtx = matrixCanvas.getContext('2d');
 const particleCanvas = document.getElementById('particleCanvas');
@@ -330,9 +327,7 @@ const musicNo = document.getElementById('musicNo');
 const bgMusic = document.getElementById('bgMusic');
 
 let started = false;
-let promptActive = false;
-
-// Размеры canvas
+let promptActive = false;]
 let W, H, fontSize, columns;
 let drops = [];
 const chars = '01アイウエオカキクケコサシスセソタチツテト';
@@ -346,6 +341,7 @@ function resizeCanvas() {
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
+
 function drawMatrix() {
   matrixCtx.fillStyle = 'rgba(2, 0, 12, 0.1)';
   matrixCtx.fillRect(0, 0, W, H);
@@ -366,7 +362,6 @@ function drawMatrix() {
   }
 }
 
-// Частицы
 let particles = [];
 
 function spawnExplosion(x, y, count = 30) {
@@ -405,15 +400,16 @@ function updateParticles() {
   }
   pctx.globalAlpha = 1;
 }
+
 const authors = ['root', 'admin', 'guest', 'user', 'sysop', 'hacker', 'neo', 'trinity'];
 
 const hackSteps = [
   "> Сканируем чат Jay_TB...",
   "> Обнаружены активные пользователи...",
   "> Идентифицируем девушек...",
-  "> Подгружаем базу пожеланий...",
-  "> Запускаем праздничный протокол...",
-  "> Ну что погнали епт"
+  "> Загружаем базу пожеланий...",
+  "> Генерируем праздничный протокол...",
+  "> Всё готово!"
 ];
 
 const wishes = [
@@ -428,7 +424,13 @@ const wishes = [
   "Пусть все планы успешно реализуются!",
   "Улыбайтесь чаще и наслаждайтесь жизнью!",
   "Оставайтесь такими же прекрасными!",
-  "Пусть в душе всегда цветёт сакура"
+];
+
+const vipWishes = [
+  { author: "Jay_TB", text: "Болейте за кого болеете и не болейте" },
+  { author: "SK1FF4IK", text: "Милые и любимые девушки, поздравляю вас с этим чудесным праздником. Пусть в вашей жизни всегда будет место для радости, улыбок и тепла. Желаю вам быть окруженными только искренними и близкими людьми, которые будут вас ценить и поддерживать. Пусть рядом всегда будет тот, кто сделает вас по-настоящему счастливой и для кого вы будете, самым дорогим человеком. Оставайтесь такими же красивыми, вдохновляющими и удивительными, какими вы есть. Никогда не грустите и знайте, что вы украшаете этот мир" },
+  { author: "kartash0v", text: "Добра, здоровья и счастья!" },
+  { author: "Mo0nRis3_", text: "Прекрасные девушки чата Жаба_ТБ, поздравляю вас с не менее прекрасным праздником посвящённым вам, дорогие дамы. Желаю вам счастья, здоровья, цветов в этот прекрасный день, да денежек побольше!!!" }
 ];
 
 function typeText(el, text, speed = 100) {
@@ -452,6 +454,7 @@ function getCenter(el) {
   const r = el.getBoundingClientRect();
   return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 }
+
 function scrollCardToBottom() {
   card.scrollTo({
     top: card.scrollHeight,
@@ -485,6 +488,43 @@ async function runHack() {
     spawnExplosion(pos.x, pos.y, 20);
 
     await new Promise(r => setTimeout(r, 2000));
+  }
+  await new Promise(r => setTimeout(r, 2000));
+
+  const vipHeader = document.createElement('p');
+  vipHeader.style.textAlign = 'center';
+  vipHeader.style.color = 'var(--neon-2)';
+  vipHeader.style.fontWeight = 'bold';
+  vipHeader.style.fontSize = '18px';
+  vipHeader.style.letterSpacing = '3px';
+  vipHeader.style.margin = '30px 0 20px';
+  vipHeader.innerHTML = '✦ ОСОБЫЕ ПОЗДРАВЛЕНИЯ ✦';
+  card.appendChild(vipHeader);
+  scrollCardToBottom();
+  await new Promise(r => setTimeout(r, 2000));
+
+  for (let vip of vipWishes) {
+    const p = document.createElement('p');
+    
+    const authorSpan = document.createElement('span');
+    authorSpan.style.color = '#ffd700';
+    authorSpan.style.opacity = '1';
+    authorSpan.style.fontWeight = 'bold';
+    authorSpan.style.textShadow = '0 0 15px #ffd700';
+    authorSpan.textContent = vip.author + ' ';
+    p.appendChild(authorSpan);
+    const textSpan = document.createElement('span');
+    textSpan.style.color = 'var(--neon-cyan)';
+    textSpan.textContent = '';
+    p.appendChild(textSpan);
+
+    card.appendChild(p);
+    await typeText(textSpan, '✦ ' + vip.text, 100);
+    
+    scrollCardToBottom();
+    const pos = getCenter(p);
+    spawnExplosion(pos.x, pos.y, 25);
+    await new Promise(r => setTimeout(r, 2500));
   }
 }
 
