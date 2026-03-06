@@ -327,7 +327,8 @@ const musicNo = document.getElementById('musicNo');
 const bgMusic = document.getElementById('bgMusic');
 
 let started = false;
-let promptActive = false;]
+let promptActive = false;
+
 let W, H, fontSize, columns;
 let drops = [];
 const chars = '01アイウエオカキクケコサシスセソタチツテト';
@@ -489,6 +490,7 @@ async function runHack() {
 
     await new Promise(r => setTimeout(r, 2000));
   }
+
   await new Promise(r => setTimeout(r, 2000));
 
   const vipHeader = document.createElement('p');
