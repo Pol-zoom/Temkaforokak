@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
 <title>С 8 марта, девушки из чата Jay_TB!</title>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -24,6 +24,10 @@ body{
   justify-content:center;
   align-items:center;
   cursor:crosshair;
+  touch-action:none;
+  position:fixed;
+  width:100%;
+  height:100%;
 }
 canvas{
   position:fixed; 
@@ -61,6 +65,7 @@ canvas{
   width:84%;
   max-width:860px;
   min-width:320px;
+  max-height:85vh;
   padding:32px;
   background:rgba(8,5,20,0.7);
   backdrop-filter:blur(12px);
@@ -73,6 +78,23 @@ canvas{
     inset 0 0 30px rgba(255,105,180,0.3);
   text-align:left;
   transition:all 0.4s ease;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:var(--neon) rgba(255,105,180,0.1);
+  touch-action:pan-y pinch-zoom;
+}
+.screen::-webkit-scrollbar{
+  width:6px;
+}
+.screen::-webkit-scrollbar-track{
+  background:rgba(255,105,180,0.1);
+  border-radius:10px;
+}
+.screen::-webkit-scrollbar-thumb{
+  background:var(--neon);
+  border-radius:10px;
+  box-shadow:0 0 10px var(--neon);
 }
 .screen::before{
   content:'';
@@ -84,6 +106,7 @@ canvas{
   opacity:0.4;
   filter:blur(8px);
   animation:borderGlow 6s linear infinite;
+  pointer-events:none;
 }
 @keyframes borderGlow{
   0%{opacity:0.4;}
@@ -106,6 +129,7 @@ canvas{
   color:var(--neon);
   text-shadow:0 0 10px var(--neon);
   animation:flicker 3s infinite;
+  pointer-events:none;
 }
 @keyframes flicker{
   0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;}
@@ -123,19 +147,32 @@ canvas{
   border-radius:0 8px 8px 0;
   margin-bottom:12px;
   text-shadow:0 0 5px currentColor;
+  word-break:break-word;
+  pointer-events:none;
 }
 
 .card{
   margin-top:12px;
   padding:8px 4px;
   display:none;
-  max-height: 70vh;
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  max-height:60vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:var(--neon-2) rgba(170,0,255,0.1);
+  touch-action:pan-y pinch-zoom;
 }
-.card::-webkit-scrollbar {
-  display: none;
+.card::-webkit-scrollbar{
+  width:4px;
+}
+.card::-webkit-scrollbar-track{
+  background:rgba(170,0,255,0.1);
+  border-radius:10px;
+}
+.card::-webkit-scrollbar-thumb{
+  background:var(--neon-2);
+  border-radius:10px;
+  box-shadow:0 0 10px var(--neon-2);
 }
 .card p{
   margin:16px 0;
@@ -148,6 +185,7 @@ canvas{
   transition:all 0.3s cubic-bezier(0.2,0.9,0.3,1);
   box-shadow:0 0 15px rgba(255,105,180,0.2);
   backdrop-filter:blur(2px);
+  word-break:break-word;
 }
 .card p:hover{
   border-left-color:var(--neon-2);
@@ -178,6 +216,7 @@ canvas{
   box-shadow:0 0 40px var(--neon-cyan);
   white-space:nowrap;
   animation:breathing 2s infinite;
+  pointer-events:none;
 }
 @keyframes breathing{
   0%,100%{box-shadow:0 0 40px var(--neon-cyan);}
@@ -199,6 +238,8 @@ canvas{
   border:2px solid var(--neon-2);
   box-shadow:0 0 60px var(--neon-2), inset 0 0 20px rgba(255,105,180,0.3);
   animation:pop 0.3s ease;
+  max-width:90%;
+  touch-action:manipulation;
 }
 @keyframes pop{
   from{transform:translate(-50%,-40%); opacity:0;}
@@ -231,6 +272,8 @@ canvas{
   transition:0.3s;
   position:relative;
   overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
 }
 #musicPrompt button::before{
   content:'';
@@ -251,6 +294,9 @@ canvas{
   width:200px;
   height:200px;
 }
+#musicPrompt button:active{
+  transform:scale(0.95);
+}
 #musicPrompt button:last-child{
   border-color:var(--neon-2);
   color:var(--neon-2);
@@ -262,13 +308,18 @@ canvas{
   color:#000;
 }
 @media (max-width:600px){
-  .screen{padding:20px; width:92%;}
+  .screen{padding:20px; width:92%; max-height:80vh;}
   #hackText{font-size:16px;}
   .card p{font-size:14px;}
-  #startMessage{font-size:18px; padding:14px 24px; white-space:normal;}
+  #startMessage{font-size:18px; padding:14px 24px; white-space:normal; width:80%;}
   #musicPrompt{padding:24px; width:90%;}
   #musicPrompt button{padding:10px 20px; font-size:16px; margin:8px;}
-  .card{max-height: 60vh;}
+  .card{max-height:50vh;}
+}
+@media (max-width:400px){
+  .screen{padding:16px; width:95%;}
+  .card p{padding:10px; font-size:13px;}
+  #musicPrompt button{padding:8px 16px; font-size:14px;}
 }
 </style>
 </head>
@@ -325,9 +376,11 @@ const musicPrompt = document.getElementById('musicPrompt');
 const musicYes = document.getElementById('musicYes');
 const musicNo = document.getElementById('musicNo');
 const bgMusic = document.getElementById('bgMusic');
+const screen = document.getElementById('screen');
 
 let started = false;
 let promptActive = false;
+let touchStartTime = 0;
 
 let W, H, fontSize, columns;
 let drops = [];
@@ -456,11 +509,22 @@ function getCenter(el) {
   return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 }
 
+function scrollToBottom() {
+  setTimeout(() => {
+    screen.scrollTo({
+      top: screen.scrollHeight,
+      behavior: 'smooth'
+    });
+  }, 50);
+}
+
 function scrollCardToBottom() {
-  card.scrollTo({
-    top: card.scrollHeight,
-    behavior: 'smooth'
-  });
+  setTimeout(() => {
+    card.scrollTo({
+      top: card.scrollHeight,
+      behavior: 'smooth'
+    });
+  }, 50);
 }
 
 async function runHack() {
@@ -484,6 +548,7 @@ async function runHack() {
 
     await typeText(p, wishes[i], 100);
     scrollCardToBottom();
+    scrollToBottom();
 
     const pos = getCenter(p);
     spawnExplosion(pos.x, pos.y, 20);
@@ -503,6 +568,7 @@ async function runHack() {
   vipHeader.innerHTML = '✦ ОСОБЫЕ ПОЗДРАВЛЕНИЯ ✦';
   card.appendChild(vipHeader);
   scrollCardToBottom();
+  scrollToBottom();
   await new Promise(r => setTimeout(r, 2000));
 
   for (let vip of vipWishes) {
@@ -524,6 +590,7 @@ async function runHack() {
     await typeText(textSpan, '✦ ' + vip.text, 100);
     
     scrollCardToBottom();
+    scrollToBottom();
     const pos = getCenter(p);
     spawnExplosion(pos.x, pos.y, 25);
     await new Promise(r => setTimeout(r, 2500));
@@ -550,6 +617,12 @@ function startAll() {
   particleCanvas.addEventListener('click', (e) => {
     spawnExplosion(e.clientX, e.clientY, 25);
   });
+  
+  particleCanvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    spawnExplosion(touch.clientX, touch.clientY, 25);
+  });
 }
 
 function showPrompt() {
@@ -563,11 +636,29 @@ musicYes.onclick = () => {
   startAll();
 };
 
+musicYes.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  fadeInAudio();
+  startAll();
+});
+
 musicNo.onclick = startAll;
+
+musicNo.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  startAll();
+});
 
 document.addEventListener('click', function(e) {
   if (!started && !promptActive) showPrompt();
 });
+
+document.addEventListener('touchstart', function(e) {
+  if (!started && !promptActive) {
+    e.preventDefault();
+    showPrompt();
+  }
+}, { passive: false });
 
 document.addEventListener('keydown', function(e) {
   if ((e.key === 'Enter' || e.key === ' ') && !started && !promptActive) {
@@ -576,8 +667,10 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-document.body.addEventListener('touchmove', function(e) {
-  e.preventDefault();
+window.addEventListener('touchmove', function(e) {
+  if (!started) {
+    e.preventDefault();
+  }
 }, { passive: false });
 </script>
 </body>
